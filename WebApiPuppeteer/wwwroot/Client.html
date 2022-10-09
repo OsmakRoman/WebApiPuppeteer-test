@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+   </head>
+<body>
+
+  <h1  id="title" >WebApiPuppeteer HTML to PDF Converter</h1>
+  <form id="upload_form" enctype="multipart/form-data" method="post">
+    <div id="btn">
+      <label  for="file1">Convert</label>
+      </div>
+    <input type="file" accept = ".html" name="file1" id="file1"  style="visibility:hidden;" onchange="uploadFile()"><br>
+    <progress  id="progressBar" value="0" max="100" ></progress>
+    <h2 id="status" ></h2>
+  </form>
+
+  <script>
+
+    function _(el) {
+        return document.getElementById(el);
+    }
+
+    function uploadFile() {
+        var file = _("file1").files[0];
+        if (file == undefined) return;
+        var formdata = new FormData();
+        formdata.append("file1", file);
+        var xhr = new XMLHttpRequest();
+        xhr.upload.addEventListener("progress", progressHandler, false);
+        xhr.addEventListener("load", completeHandler, false);
+        xhr.open("POST", "http://localhost:5114/converter",true); 
+        xhr.send(formdata);
+    }
+
+    function downloadFile(){
+        _("status").innerHTML = '<p style = "margin: 0px 0px 0px 55px">PDF Downloaded </p>';
+    }
+
+    function progressHandler(event) {
+        var percent = (event.loaded / event.total) * 100;
+        _("progressBar").value = Math.round(percent);
+        _("status").innerHTML = Math.round(percent) + "% uploaded... Please Wait";
+    }
+
+    function completeHandler(event) {
+        _("status").innerHTML = '<a style = "margin: 0px 0px 0px 65px" href="http://localhost:5114/converter/' + event.target.responseText + '"onclick="downloadFile()">PDF Download</a>';
+        _("progressBar").value = 0; 
+    }
+
+  </script>
+
+</body>
+</html>
+
+<style>
+
+    #title {
+        margin:20px;
+        color: maroon;
+    }
+
+    #btn {
+        padding: 12px 0px 0px 15px;
+        margin:5px 0px 0px 235px;
+        font-size: 14px;
+        border: 2px solid grey;
+        border-radius: 5px;
+        background: gainsboro;
+        color: rgb(84, 126, 29);
+        width: 100px; height: 40px;
+    }
+
+    label {
+        font-size: 25px ;
+    }
+
+    progress {
+        margin: 0px 0px 0px 20px;
+        width:600px;
+    }
+
+    #status {
+        padding: 0px 0px 0px 150px;
+    }
+  
+</style>
